@@ -1,0 +1,7 @@
+**/bin/*
+**/obj/*
+**/packages*
+db/*.json
+db/*.sql
+secrets/
+
