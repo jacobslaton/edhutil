@@ -1,4 +1,4 @@
-import ujson as json
+import json
 
 all_printings = None
 with open("AllPrintings.json", "r") as fin:
