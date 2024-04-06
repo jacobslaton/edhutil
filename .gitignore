@@ -2,6 +2,7 @@
 **/obj/*
 **/packages*
 db/*.json
-db/*.sql
+db/AllPrintings.sql
+db/dml.sql
 secrets/
 
