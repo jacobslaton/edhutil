@@ -153,7 +153,7 @@ for set_code in list(all_printings["data"].keys()):
                 ruling_id = next_ruling_id
                 find_index = -1
                 try:
-                    pass#find_index = list(all_printings["rulings"].values()).index(item)
+                    find_index = list(all_printings["rulings"].values()).index(item)
                 except Exception as e:
                     pass
                 if find_index < 0:
