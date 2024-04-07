@@ -4,5 +4,6 @@
 db/*.json
 db/AllPrintings.sql
 db/dml.sql
+DiscordBot/config/token.txt
 secrets/
 
