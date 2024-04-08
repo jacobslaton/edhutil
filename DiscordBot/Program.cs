@@ -9,7 +9,6 @@ namespace edhutil.discord
 
         public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
             client.Log += Log;
             string token = File.ReadAllText("config/token.txt");
             await client.LoginAsync(TokenType.Bot, token);
