@@ -229,6 +229,7 @@ for set_code in list(all_printings["data"].keys()):
             "original_type" : card["originalType"] if "originalType" in card else None,
             "power" : card["power"] if "power" in card else None,
             "rarity" : card["rarity"],
+            "scryfall_id" : card["identifiers"]["scryfallId"],
             "security_stamp" : card["securityStamp"] if "securityStamp" in card else None,
             "set_code" : card["setCode"],
             "side" : card["side"] if "side" in card else None,
@@ -268,7 +269,7 @@ for card in all_printings["cards"]:
             insert_vals.append(f"{val}")
     all_vals.append(f"({', '.join(insert_vals)})")
 with open("dml.sql", "w") as fout:
-    fout.write(f"insert into public.cards (ascii_name, border_color, defense, edhrec_rank, edhrec_saltiness, face_flavor_name, face_mana_value, face_name, flavor_name, flavor_text, frame_version, has_alternative_deck_limit, has_foil, has_non_foil, is_alternative, is_full_art, is_promo, is_reprint, is_reserved, is_story_spotlight, is_textless, is_timeshifted, language, layout, loyalty, mana_cost, mana_value, name, number, original_release_date, original_text, original_type, power, rarity, security_stamp, set_code, side, signature, text, toughness, type, uuid, watermark)\n")
+    fout.write(f"insert into public.cards (ascii_name, border_color, defense, edhrec_rank, edhrec_saltiness, face_flavor_name, face_mana_value, face_name, flavor_name, flavor_text, frame_version, has_alternative_deck_limit, has_foil, has_non_foil, is_alternative, is_full_art, is_promo, is_reprint, is_reserved, is_story_spotlight, is_textless, is_timeshifted, language, layout, loyalty, mana_cost, mana_value, name, number, original_release_date, original_text, original_type, power, rarity, scryfall_id, security_stamp, set_code, side, signature, text, toughness, type, uuid, watermark)\n")
     fout.write("values\n")
     all_vals_str = ',\n'.join(all_vals)
     fout.write(f"{all_vals_str};\n")

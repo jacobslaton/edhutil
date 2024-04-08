@@ -11,7 +11,7 @@ create table cards (
     face_name                   text,
     flavor_name                 text,
     flavor_text                 text,
-    frame_version               text,
+    frame_version               text not null,
     has_alternative_deck_limit  boolean not null,
     has_foil                    boolean not null,
     has_non_foil                boolean not null,
@@ -35,6 +35,7 @@ create table cards (
     original_type               text,
     power                       text,
     rarity                      text not null,
+    scryfall_id                 uuid not null,
     security_stamp              text,
     set_code                    text not null,
     side                        text,
@@ -45,5 +46,86 @@ create table cards (
     uuid                        uuid not null,
     watermark                   text,
     primary key (uuid)
+);
+
+create table artists (
+);
+
+create table finishes (
+);
+
+create table frame_effects (
+);
+
+create table keywords (
+);
+
+create table promo_types (
+);
+
+create table rulings (
+);
+
+create table subsets (
+);
+
+create table subtypes (
+);
+
+create table supertypes (
+);
+
+create table types (
+);
+
+create table map_cards_artists (
+);
+
+create table map_cards_attraction_lights (
+);
+
+create table map_cards_color_identity (
+);
+
+create table map_cards_color_indicators (
+);
+
+create table map_cards_colors (
+);
+
+create table map_cards_finishes (
+);
+
+create table map_cards_frame_effects (
+);
+
+create table map_cards_keywords (
+);
+
+create table map_cards_other_face_ids (
+);
+
+create table map_cards_promo_types (
+);
+
+create table map_cards_rulings (
+);
+
+create table map_cards_sets_variations (
+);
+
+create table map_cards_subsets (
+);
+
+create table map_cards_subtypes (
+);
+
+create table map_cards_supertypes (
+);
+
+create table map_cards_types (
+);
+
+create table map_sets_cards (
 );
 
