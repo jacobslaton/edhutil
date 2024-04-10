@@ -11,14 +11,14 @@ namespace Edhutil.Discord
         private DiscordSocketClient? _client = null;
         private InteractionService? _commands = null;
         private readonly IConfiguration _config;
-        private CommandHandler? _handler = null;
+        private Services.CommandHandler? _handler = null;
 
         public Program()
         {
-            IConfigurationBuilder builder = new ConfigurationBuilder()
+            _config = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile(path: Path.Join("config", "config.json"));
-            _config = builder.Build();
+                .AddJsonFile(path: Path.Join("config", "config.json"))
+                .Build();
         }
 
         public static Task Main(string[] args) => new Program().MainAsync(args);
@@ -29,7 +29,8 @@ namespace Edhutil.Discord
             {
                 _client = services.GetRequiredService<DiscordSocketClient>();
                 _commands = services.GetRequiredService<InteractionService>();
-                _handler = services.GetRequiredService<CommandHandler>();
+                _handler = services
+                    .GetRequiredService<Services.CommandHandler>();
 
                 _client.Log += LogAsync;
                 _commands.Log += LogAsync;
@@ -72,7 +73,17 @@ namespace Edhutil.Discord
                         );
                     }
                 )
-                .AddSingleton<CommandHandler>()
+                .AddSingleton<Services.CommandHandler>()
+                .AddSingleton
+                (
+                    service =>
+                    {
+                        return new Services.EdhutilApiClient
+                        (
+                            url: _config[$"edhutil_api_url"] ?? string.Empty
+                        );
+                    }
+                )
                 .BuildServiceProvider();
         }
         

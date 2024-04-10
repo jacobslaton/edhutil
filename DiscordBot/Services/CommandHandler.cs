@@ -2,7 +2,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using System.Reflection;
 
-namespace Edhutil.Discord
+namespace Edhutil.Discord.Services
 {
     public class CommandHandler
     {
