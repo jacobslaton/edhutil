@@ -1,25 +1,42 @@
-namespace Edhutil
+namespace Edhutil.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        private readonly IConfiguration _config;
+
+        public Program()
         {
-            WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
+            _config = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile(path: "appsettings.json")
+                .Build();
+        }
 
-            // Add services to the container.
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+        public static void Main(string[] args) => new Program().Run(args);
 
-            WebApplication app = builder.Build();
+        public void Run(string[] args)
+        {
+            string connectionLocation = "Connections:DefaultConnection";
+            WebApplicationBuilder? webBuilder = WebApplication
+                .CreateBuilder(args);
+            webBuilder.Services.AddControllers();
+            webBuilder.Services.AddEndpointsApiExplorer();
+            webBuilder.Services.AddSwaggerGen();
+            webBuilder.Services.AddSingleton<Services.CardProvider>
+            (
+                new Services.CardProvider
+                (
+                    hostname: _config[$"{connectionLocation}:Host"] ?? string.Empty,
+                    port: _config[$"{connectionLocation}:Port"] ?? string.Empty,
+                    username: _config[$"{connectionLocation}:User"] ?? string.Empty,
+                    password: _config[$"{connectionLocation}:Password"] ?? string.Empty,
+                    database: _config[$"{connectionLocation}:Database"] ?? string.Empty
+                )
+            );
 
-            // Configure the HTTP request pipeline.
-            if (true || app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
+            WebApplication app = webBuilder.Build();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             //app.UseHttpsRedirection();
             app.MapControllers();
             app.Run();
