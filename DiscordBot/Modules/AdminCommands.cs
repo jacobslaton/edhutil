@@ -6,9 +6,9 @@ namespace Edhutil.Discord.Modules
     public class AdminCommands : InteractionModuleBase<SocketInteractionContext>
     {
         public InteractionService? Commands { get; set; } = null;
-        private CommandHandler _handler;
+        private Services.CommandHandler _handler;
 
-        public AdminCommands(CommandHandler handler)
+        public AdminCommands(Services.CommandHandler handler)
         {
             _handler = handler;
         }
