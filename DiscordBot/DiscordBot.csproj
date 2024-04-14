@@ -1,18 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>discord_bot</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>discord_bot</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Discord.NET" Version="3.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Discord.NET" Version="3.14.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
+
+    <Target Name="CreateConfigDirCompile" BeforeTargets="CoreCompile">
+        <MakeDir Directories="$(OutputPath)/config" />
+    </Target>
+
+    <Target Name="CopyConfigFileCompile" AfterTargets="CreateConfigDirCompile">
+        <Copy SourceFiles="config/config.json" DestinationFolder="$(OutputPath)/config" />
+    </Target>
+
+    <Target Name="CreateConfigDirPublish" BeforeTargets="Publish">
+        <MakeDir Directories="$(PublishDir)/config" />
+    </Target>
+
+    <Target Name="CopyConfigFilePublish" AfterTargets="CreateConfigDirPublish">
+        <Copy SourceFiles="config/config.json" DestinationFolder="$(PublishDir)/config" />
+    </Target>
 
 </Project>
