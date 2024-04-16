@@ -4,43 +4,34 @@
 
 # Contents
 - 1 - [Introduction](#1-introduction)
-- 2 - [Database Setup](#2-database-setup)
+- 2 - [Script Setup](#2-script-setup)
+- 3 - [Future Features](#3-future-features)
 
 ---
 
 # 1. Introduction
 
+**edhutil** is a collection of tools that will aid players with various tasks related to playing and discussing Elder Dragon Highlander (EDH).
+
+The software stack includes 3 parts; a Postgres database, an ASP.NET API, and a Discord bot.
+
 ---
 
-# 2. Database Setup
+# 2. Script Setup
 
-To setup the password for the database docker container, put the password in a file and run this command from the repository's root.
+The project hasn't been configured to use docker compose yet, so running the bash scripts in the scripts folder sets up the project.
+They should be run from the root of the repository in order of prerequisites, database, API, then Discord.
+The config templates in Edhutil and DiscordBot should be filled out after running the prerequisites script and before the others.
+Make sure to remove the `.template` from the config file names.
 
-```
-docker secret create edhutil_postgres_password secrets/password.txt
-```
+---
 
-Create a volume for the database.
+# 3. Future Features
 
-```
-docker volume create edhutil_data
-```
+This is a loose list of planned features.
 
-Build the image for the database container.
+- Lookup command that takes in a card and printing and responds with an image of that card.
+- Deck tracking per player.
+- Score tracking per deck and pilot pair.
 
-```
-sudo docker build ./db -t edhutil-db:latest
-```
-
-Create and run the container.
-
-```
-sudo docker run --name edhutil-db -d -p 5432:5432 -e POSTGRES_PASSWORD=$(cat ./secrets/password.txt) -v edhutil_data:/var/lib/postgresql/data edhutil-db:latest
-```
-
-Restart a stopped container.
-
-```
-docker restart edhutil-db
-```
-
+**Note:** This section doesn't really belong in the README, remove this when more functionality has been added.
