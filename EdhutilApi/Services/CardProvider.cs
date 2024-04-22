@@ -24,27 +24,27 @@ namespace Edhutil.Api.Services
             _connectionString = $"Host={hostname};Port={port};Username={username};Password={password};Database={database}";
         }
 
-        public Card GetCardByUuid(Guid id)
+        public Models.Card GetCardByUuid(Guid id)
         {
-            Card card = new();
+            Models.Card card = new();
             string query = "SELECT * FROM cards WHERE uuid = @Uuid";
             using (NpgsqlConnection connection = new(_connectionString))
             {
                 card = connection
-                    .Query<Card>(query, new { Uuid = id })
+                    .Query<Models.Card>(query, new { Uuid = id })
                     .FirstOrDefault() ?? new();
             }
             return card;
         }
 
-        public Card GetRandomCard()
+        public Models.Card GetRandomCard()
         {
-            Card card = new();
+            Models.Card card = new();
             string query = "SELECT * FROM cards ORDER BY RANDOM() LIMIT 1";
             using (NpgsqlConnection connection = new(_connectionString))
             {
                 card = connection
-                    .Query<Card>(query)
+                    .Query<Models.Card>(query)
                     .FirstOrDefault() ?? new();
             }
             return card;
