@@ -15,6 +15,10 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Models\Models.csproj" />
+    </ItemGroup>
+
     <Target Name="CreateConfigDirCompile" BeforeTargets="CoreCompile">
         <MakeDir Directories="$(OutputPath)/config" />
     </Target>

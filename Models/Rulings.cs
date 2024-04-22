@@ -1,4 +1,4 @@
-namespace Edhutil.Api
+namespace Edhutil.Models
 {
     public class Rulings
     {
