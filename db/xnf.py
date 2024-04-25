@@ -1,8 +1,13 @@
 import json
+import uuid
 
+uuid_namespace_printing_group = uuid.UUID("1fa43a8b-97e2-4285-b3cd-0c9510027035")
+
+print("Loading AllPrintings.json into memory...")
 all_printings = None
 with open("AllPrintings.json", "r") as fin:
     all_printings = json.load(fin)
+print("Transforming AllPrintings.json...")
 
 # Drop unwanted data.
 for set_code in all_printings["data"].keys():
@@ -13,6 +18,7 @@ all_printings["cards"] = []
 all_printings["finishes"] = []
 all_printings["frame_effects"] = []
 all_printings["keywords"] = []
+all_printings["printing_groups"] = {}
 all_printings["promo_types"] = []
 all_printings["rulings"] = {}
 all_printings["subsets"] = []
@@ -35,6 +41,7 @@ all_printings["map_cards_subsets"] = {}
 all_printings["map_cards_subtypes"] = {}
 all_printings["map_cards_supertypes"] = {}
 all_printings["map_cards_types"] = []
+all_printings["map_printing_groups_cards"] = []
 all_printings["map_sets_cards"] = []
 next_ruling_id = 0
 freq = {}
@@ -193,6 +200,11 @@ for set_code in list(all_printings["data"].keys()):
                     "set_code": set_code,
                     "variation_uuid": item,
                 })
+        # Create printing_groups.
+        printing_group_uuid = f'{uuid.uuid5(uuid_namespace_printing_group, card["name"])}'
+        all_printings["printing_groups"][printing_group_uuid] = card["uuid"]
+        # Create map_printing_groups_cards.
+        all_printings["map_printing_groups_cards"].append((printing_group_uuid, card["uuid"],))
         # Add card.
         all_printings["cards"].append({
             "ascii_name" : card["asciiName"] if "asciiName" in card else None,
@@ -254,6 +266,11 @@ for set_code in list(all_printings["data"].keys()):
 
     all_printings["data"][set_code]["cards"] = [card for card in all_printings["data"][set_code]["cards"] if not card["uuid"] in remove_cards]
 
+print("Writing SQL queries...")
+
+def clean_string(string):
+    return string.replace("\n", "\\n").replace("'", "''")
+
 all_vals = []
 for card in all_printings["cards"]:
     insert_vals = []
@@ -261,16 +278,32 @@ for card in all_printings["cards"]:
         if isinstance(val, bool):
             insert_vals.append(str(val).lower())
         elif isinstance(val, str):
-            clean_val = val.replace("\n", "\\n").replace("'", "''")
-            insert_vals.append(f"'{clean_val}'")
+            insert_vals.append(f"'{clean_string(val)}'")
         elif val == None:
             insert_vals.append("null")
         else:
             insert_vals.append(f"{val}")
     all_vals.append(f"({', '.join(insert_vals)})")
 with open("dml.sql", "w") as fout:
+    # Write inserts for cards.
     fout.write(f"insert into public.cards (ascii_name, border_color, defense, edhrec_rank, edhrec_saltiness, face_flavor_name, face_mana_value, face_name, flavor_name, flavor_text, frame_version, has_alternative_deck_limit, has_foil, has_non_foil, is_alternative, is_full_art, is_promo, is_reprint, is_reserved, is_story_spotlight, is_textless, is_timeshifted, language, layout, loyalty, mana_cost, mana_value, name, number, original_release_date, original_text, original_type, power, rarity, scryfall_id, security_stamp, set_code, side, signature, text, toughness, type, uuid, watermark)\n")
     fout.write("values\n")
     all_vals_str = ',\n'.join(all_vals)
-    fout.write(f"{all_vals_str};\n")
+    fout.write(f"{all_vals_str};\n\n")
+
+    # Write inserts for printing_groups.
+    fout.write(f"insert into public.printing_groups (uuid, default_card_uuid)\n")
+    fout.write("values\n")
+    all_vals = [f"('{key}', '{val}')" for key, val in all_printings["printing_groups"].items()]
+    all_vals_str = ',\n'.join(all_vals)
+    fout.write(f"{all_vals_str};\n\n")
+
+    # Write inserts for map_printing_groups_cards.
+    fout.write(f"insert into public.map_printing_groups_cards (printing_group_uuid, card_uuid)\n")
+    fout.write("values\n")
+    all_vals = [f"('{val[0]}', '{val[1]}')" for val in all_printings["map_printing_groups_cards"]]
+    all_vals_str = ',\n'.join(all_vals)
+    fout.write(f"{all_vals_str};\n\n")
+
+print("xnf.py finished!")
 

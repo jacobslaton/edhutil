@@ -60,6 +60,12 @@ create table frame_effects (
 create table keywords (
 );
 
+create table printing_groups (
+    uuid                        uuid not null,
+    default_card_uuid           uuid not null references cards(uuid),
+    primary key (uuid)
+);
+
 create table promo_types (
 );
 
@@ -124,6 +130,12 @@ create table map_cards_supertypes (
 );
 
 create table map_cards_types (
+);
+
+create table map_printing_groups_cards (
+    printing_group_uuid         uuid not null references printing_groups(uuid),
+    card_uuid                   uuid not null references cards(uuid),
+    primary key (printing_group_uuid, card_uuid)
 );
 
 create table map_sets_cards (
