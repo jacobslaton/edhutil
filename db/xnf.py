@@ -2,6 +2,7 @@ import json
 import uuid
 
 uuid_namespace_printing_group = uuid.UUID("1fa43a8b-97e2-4285-b3cd-0c9510027035")
+uuid_namespace_rulings = uuid.UUID("f0c8fe56-e55b-4e49-81c4-3b6ddfed80c1")
 
 print("Loading AllPrintings.json into memory...")
 all_printings = None
@@ -43,7 +44,6 @@ all_printings["map_cards_supertypes"] = {}
 all_printings["map_cards_types"] = []
 all_printings["map_printing_groups_cards"] = []
 all_printings["map_sets_cards"] = []
-next_ruling_id = 0
 for set_code in list(all_printings["data"].keys()):
     # Remove Alchemy sets.
     if all_printings["data"][set_code]["name"].startswith("Alchemy"):
@@ -133,18 +133,10 @@ for set_code in list(all_printings["data"].keys()):
         # Normalize rulings and create map_cards_rulings.
         if "rulings" in card:
             for item in card["rulings"]:
-                ruling_id = next_ruling_id
-                find_index = -1
-                try:
-                    find_index = list(all_printings["rulings"].values()).index(item)
-                except Exception as e:
-                    pass
-                if find_index < 0:
-                    all_printings["rulings"][next_ruling_id] = item
-                    next_ruling_id += 1
-                else:
-                    ruling_id = find_index
-                all_printings["map_cards_rulings"][card["uuid"]] = ruling_id
+                ruling_uuid = f'{uuid.uuid5(uuid_namespace_rulings, item["text"])}'
+                if not ruling_uuid in all_printings["rulings"]:
+                    all_printings["rulings"][ruling_uuid] = item
+                all_printings["map_cards_rulings"][card["uuid"]] = ruling_uuid
         # Normalize subsets and create map_cards_subsets.
         if "subsets" in card:
             for item in card["subsets"]:
