@@ -2,6 +2,7 @@ import json
 import uuid
 
 uuid_namespace_printing_group = uuid.UUID("1fa43a8b-97e2-4285-b3cd-0c9510027035")
+uuid_namespace_rulings = uuid.UUID("f0c8fe56-e55b-4e49-81c4-3b6ddfed80c1")
 
 print("Loading AllPrintings.json into memory...")
 all_printings = None
@@ -43,36 +44,11 @@ all_printings["map_cards_supertypes"] = {}
 all_printings["map_cards_types"] = []
 all_printings["map_printing_groups_cards"] = []
 all_printings["map_sets_cards"] = []
-next_ruling_id = 0
-freq = {}
-types = {}
 for set_code in list(all_printings["data"].keys()):
     # Remove Alchemy sets.
     if all_printings["data"][set_code]["name"].startswith("Alchemy"):
         all_printings["data"].pop(set_code, None)
         continue
-
-    for field in all_printings["data"][set_code]:
-        if field in freq:
-            freq[field] += 1
-        else:
-            freq[field] = 1
-        if not field in types:
-            if type(all_printings["data"][set_code][field]) is list:
-                types[field] = "list"
-                #print(set_code, field)
-                #for item in all_printings["data"][set_code][field][:min(len(all_printings["data"][set_code][field]), 10)]:
-                    #print(f"\t{str(item)[:min(len(item), 100)]}")
-            elif type(all_printings["data"][set_code][field]) is dict:
-                types[field] = "dict"
-            elif type(all_printings["data"][set_code][field]) is str:
-                types[field] = "str"
-            elif type(all_printings["data"][set_code][field]) is int:
-                types[field] = "int"
-            elif type(all_printings["data"][set_code][field]) is bool:
-                types[field] = "bool"
-            else:
-                types[field] = "error"
 
     remove_cards = []
     for card in all_printings["data"][set_code]["cards"]:
@@ -157,18 +133,10 @@ for set_code in list(all_printings["data"].keys()):
         # Normalize rulings and create map_cards_rulings.
         if "rulings" in card:
             for item in card["rulings"]:
-                ruling_id = next_ruling_id
-                find_index = -1
-                try:
-                    find_index = list(all_printings["rulings"].values()).index(item)
-                except Exception as e:
-                    pass
-                if find_index < 0:
-                    all_printings["rulings"][next_ruling_id] = item
-                    next_ruling_id += 1
-                else:
-                    ruling_id = find_index
-                all_printings["map_cards_rulings"][card["uuid"]] = ruling_id
+                ruling_uuid = f'{uuid.uuid5(uuid_namespace_rulings, item["text"])}'
+                if not ruling_uuid in all_printings["rulings"]:
+                    all_printings["rulings"][ruling_uuid] = item
+                all_printings["map_cards_rulings"][card["uuid"]] = ruling_uuid
         # Normalize subsets and create map_cards_subsets.
         if "subsets" in card:
             for item in card["subsets"]:
