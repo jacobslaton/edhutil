@@ -44,35 +44,11 @@ all_printings["map_cards_types"] = []
 all_printings["map_printing_groups_cards"] = []
 all_printings["map_sets_cards"] = []
 next_ruling_id = 0
-freq = {}
-types = {}
 for set_code in list(all_printings["data"].keys()):
     # Remove Alchemy sets.
     if all_printings["data"][set_code]["name"].startswith("Alchemy"):
         all_printings["data"].pop(set_code, None)
         continue
-
-    for field in all_printings["data"][set_code]:
-        if field in freq:
-            freq[field] += 1
-        else:
-            freq[field] = 1
-        if not field in types:
-            if type(all_printings["data"][set_code][field]) is list:
-                types[field] = "list"
-                #print(set_code, field)
-                #for item in all_printings["data"][set_code][field][:min(len(all_printings["data"][set_code][field]), 10)]:
-                    #print(f"\t{str(item)[:min(len(item), 100)]}")
-            elif type(all_printings["data"][set_code][field]) is dict:
-                types[field] = "dict"
-            elif type(all_printings["data"][set_code][field]) is str:
-                types[field] = "str"
-            elif type(all_printings["data"][set_code][field]) is int:
-                types[field] = "int"
-            elif type(all_printings["data"][set_code][field]) is bool:
-                types[field] = "bool"
-            else:
-                types[field] = "error"
 
     remove_cards = []
     for card in all_printings["data"][set_code]["cards"]:
