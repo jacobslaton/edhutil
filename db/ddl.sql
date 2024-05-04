@@ -70,6 +70,10 @@ create table promo_types (
 );
 
 create table rulings (
+    uuid                        uuid not null,
+    date                        date not null,
+    text                        text not null,
+    primary key (uuid)
 );
 
 create table subsets (
@@ -115,6 +119,9 @@ create table map_cards_promo_types (
 );
 
 create table map_cards_rulings (
+    card_uuid                   uuid not null references cards(uuid),
+    ruling_uuid                 uuid not null references rulings(uuid),
+    primary key (card_uuid, ruling_uuid)
 );
 
 create table map_cards_sets_variations (

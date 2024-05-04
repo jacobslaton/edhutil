@@ -266,6 +266,20 @@ with open("dml.sql", "w") as fout:
     all_vals_str = ',\n'.join(all_vals)
     fout.write(f"{all_vals_str};\n\n")
 
+    # Write inserts for rulings.
+    fout.write(f"insert into public.rulings (uuid, date, text)\n")
+    fout.write("values\n")
+    all_vals = [f"('{key}', '{val['date']}', '{clean_string(val['text'])}')" for key, val in all_printings["rulings"].items()]
+    all_vals_str = ',\n'.join(all_vals)
+    fout.write(f"{all_vals_str};\n\n")
+
+    # Write inserts for map_cards_rulings.
+    fout.write(f"insert into public.map_cards_rulings (card_uuid, ruling_uuid)\n")
+    fout.write("values\n")
+    all_vals = [f"('{key}', '{val}')" for key, val in all_printings["map_cards_rulings"].items()]
+    all_vals_str = ',\n'.join(all_vals)
+    fout.write(f"{all_vals_str};\n\n")
+
     # Write inserts for map_printing_groups_cards.
     fout.write(f"insert into public.map_printing_groups_cards (printing_group_uuid, card_uuid)\n")
     fout.write("values\n")
